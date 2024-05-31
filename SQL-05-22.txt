@@ -1,0 +1,148 @@
+SELECT ROUND(AVG(`price`)) as 'キА' ,
+	   Max(`price`) as '程蔼禣',
+       MIN(`price`) as '程禣',
+       count(`price`) as '掸计',
+       sum(`price`) as '羆禣'
+FROM `records`
+
+
+CONCAT
+SELECT CONCAT('ㄏノ-',`name`) as '跋' FROM `place`
+
+GROUP_CONCAT
+SELECT GROUP_CONCAT(`note`) as 'ず甧' FROM `records` GROUP BY `type`
+
+DATE
+SELECT day(`date`) as 'ら戳', GROUP_CONCAT(`note`) as 'ず甧' FROM `records` GROUP BY date(`date`)
+
+CASE WHEN
+SELECT `school_num` , 
+	CASE 
+         WHEN `score`>=60 THEN 'の'
+         WHEN `score`<60 THEN 'ぃの'
+         ELSE '戈岿粇'
+    END  as 'Θ罿'
+FROM `student_scores`
+
+
+
+Join
+
+SELECT `class_code`, count(*) as '计' FROM `class_student` GROUP BY `class_code`
+
+
+1.
+SELECT * FROM `classes` ,`class_student`
+
+2.
+SELECT `class_code`,
+		count(*) as '计' 
+FROM `classes` ,`class_student` 
+WHERE `class_student`.`class_code`=`classes`.`code`  
+GROUP BY `class_code`
+
+3.
+SELECT `class_student`.`class_code`,
+	   `classes`.`name`,
+		count(*) as '计' 
+FROM `classes` ,`class_student` 
+WHERE `class_student`.`class_code`=`classes`.`code`  
+GROUP BY  `class_student`.`class_code`
+
+侯ㄤ粂猭
+SELECT `class_student`.`class_code`,
+	   `classes`.`name`,
+		count(*) as '计' 
+FROM `classes` , `class_student` 
+WHERE `class_student`.`class_code`=`classes`.`code`  && 
+		`class_student`.`class_code` IN ('101','103','110')
+
+GROUP BY  `class_student`.`class_code`
+
+LEFT JOIN
+SELECT `classes`.`code`,
+	   `classes`.`name`,
+		count(`class_student`.`seat_num`) as '计' 
+FROM  `classes`
+LEFT JOIN `class_student` ON `class_student`.`class_code`=`classes`.`code` 
+GROUP BY  `class_student`.`class_code`,`classes`.`name`
+ORDER BY `classes`.`code` 
+
+
+INNER JOIN
+
+SELECT `classes`.`code`,
+	   `classes`.`name`,
+		count(`class_student`.`seat_num`) as '计' 
+FROM  `classes`
+Inner JOIN `class_student` ON `class_student`.`class_code`=`classes`.`code` 
+GROUP BY  `class_student`.`class_code`,`classes`.`name`
+ORDER BY `classes`.`code` 
+
+璸衡痁キАΘ罿
+SELECT `class_student`.`class_code`,
+		AVG(`student_scores`.`score`) as 'キАΘ罿' 
+FROM  `class_student`, `student_scores` 
+WHERE `class_student`.`school_num`=`student_scores`.`school_num` 
+GROUP BY  `class_student`.`class_code`
+ORDER BY `class_student`.`class_code` 
+
+
+
+ゑ耕WHERE㎝INNERJOIN
+SELECT `class_student`.`class_code`,
+	   `classes`.`name`,
+       count(`class_student`.`school_num`) as '计',
+		AVG(`student_scores`.`score`) as 'キАΘ罿' 
+FROM  `class_student`, `student_scores` ,`classes`
+WHERE `class_student`.`school_num`=`student_scores`.`school_num` &&
+      `class_student`.`class_code`=`classes`.`code`
+	  
+GROUP BY  `class_student`.`class_code`
+ORDER BY `class_student`.`class_code` 
+
+
+SELECT `class_student`.`class_code`,
+	   `classes`.`name`,
+       count(`class_student`.`school_num`) as '计',
+		AVG(`student_scores`.`score`) as 'キАΘ罿' 
+FROM  `class_student`
+INNER JOIN `student_scores` ON `class_student`.`school_num` = `student_scores`.`school_num`
+INNER JOIN `classes` ON `class_student`.`class_code`=`classes`.`code`
+GROUP BY  `class_student`.`class_code`
+ORDER BY `class_student`.`class_code` 
+
+
+SELECT  `class_student`.`class_code`,
+        `classes`.`name`,
+        count(`class_student`.`school_num`) as '计',
+        AVG(`student_scores`.`score`) as 'キАΘ罿',
+        (SELECT AVG(`student_scores`.`score`) from `student_scores`) as 'キА'
+FROM `class_student`
+INNER JOIN `student_scores` ON `class_student`.`school_num` = `student_scores`.`school_num`
+INNER JOIN `classes` ON `class_student`.`class_code`=`classes`.`code`
+GROUP BY `class_student`.`class_code`
+ORDER BY `class_student`.`class_code`
+
+痁计
+SELECT `class_code`,count(`id`) from `class_student` group by `class_code`
+
+痁Θ罿
+SELECT `class_code` , avg(`student_scores`.`score`) as 'score' 
+FROM `class_student`,`student_scores` 
+WHERE `class_student`.`school_num`=`student_scores`.`school_num`
+GROUP BY `class_student`.`class_code`
+
+琩高
+SELECT 
+    `A`.`class_code`,
+    `classes`.`name`,
+    `A`.`计`,
+    `B`.`score`
+FROM (SELECT `class_code`,count(`id`) as '计' from `class_student` group by `class_code`)A,
+     (SELECT `class_code` , avg(`student_scores`.`score`) as 'score' 
+      FROM `class_student`,`student_scores` 
+      WHERE `class_student`.`school_num`=`student_scores`.`school_num`
+      GROUP BY `class_student`.`class_code`)B,
+      `classes`
+WHERE `A`.`class_code`=`B`.`class_code`  && `A`.`class_code`=`classes`.`code`
